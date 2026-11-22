@@ -116,11 +116,9 @@ if __name__ == "__main__":
         input_image = Image.open(image_name).convert('RGB')
         ori_width, ori_height = input_image.size
         rscale = args.upscale
-        resize_flag = False
         if ori_width < args.process_size//rscale or ori_height < args.process_size//rscale:
             scale = (args.process_size//rscale)/min(ori_width, ori_height)
             input_image = input_image.resize((int(scale*ori_width), int(scale*ori_height)))
-            resize_flag = True
 
         # ori_image = input_image
         input_image = input_image.resize((input_image.size[0]*rscale, input_image.size[1]*rscale))
@@ -161,8 +159,9 @@ if __name__ == "__main__":
                 pass
                 print("nofix!!!")
 
-            if resize_flag:
-                output_pil.resize((int(args.upscale*ori_width), int(args.upscale*ori_height)))
+            target_size = (args.upscale * ori_width, args.upscale * ori_height)
+            if output_pil.size != target_size:
+                output_pil = output_pil.resize(target_size)
 
         output_pil.save(os.path.join(args.output_dir, bname))
 
